@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --secondary: #7c3aed;
+  --accent: #f472b6;
+  --background: #f8fafc;
+  --text: #1e293b;
+  --text-light: #64748b;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+.input-field {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-200 outline-none bg-white/50 backdrop-blur-sm;
+}
+
+.btn-primary {
+  @apply w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 
+  hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:shadow-indigo-500/25 
+  focus:ring-2 focus:ring-indigo-200 focus:outline-none
+  disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.form-container {
+  @apply glass-effect rounded-2xl p-8 md:p-10 max-w-md w-full mx-4;
+}
+
+.page-title {
+  @apply text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6;
+}
+
+.error-message {
+  @apply text-red-500 text-sm mt-1 flex items-center gap-1;
+}
+
+.success-message {
+  @apply text-green-600 text-sm mt-1 flex items-center gap-1;
+}
+
+.link-text {
+  @apply text-indigo-600 hover:text-indigo-700 font-medium transition-colors duration-200;
+}
+
+/* Custom animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Decorative elements */
+.decoration-circle {
+  @apply absolute rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 blur-2xl;
+}
+
+.decoration-circle-1 {
+  @apply decoration-circle w-64 h-64 -top-32 -left-32;
+}
+
+.decoration-circle-2 {
+  @apply decoration-circle w-96 h-96 -bottom-48 -right-48;
+}
