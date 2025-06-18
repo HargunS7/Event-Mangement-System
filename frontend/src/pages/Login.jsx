@@ -6,7 +6,8 @@ import { FiMail, FiLock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
+  // const [form, setForm] = useState({ email: '',username:'', password: '' });
+  const [form,setForm] = useState({identifier :'',password:''});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,19 +22,64 @@ export default function Login() {
     setSuccess('');
     setIsLoading(true);
 
-    const { email, password } = form;
+    // const { email,username, password } = form;
 
-    if (!email || !password) {
-      setError('Email and password are required.');
-      setIsLoading(false);
-      return;
+    // if ((!email&&username) || !password) {
+    //   setError('Email or Username and password are required.');
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+    const { identifier, password } = form;
+
+    if (!identifier || !password) {
+        setError('Email or Username and password are required.');
+        setIsLoading(false);
+        return;
     }
 
     try {
-      const { data, error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // adding login with username or email
+      // let useremail = email;
+
+      // if(!email&&username){
+      //   const {data,error} = await supabase
+      //     .from('profiles')
+      //     .select('email')
+      //     .eq('username',username)
+      //     .single();
+
+      //   if(error||!data){
+      //     throw new error('Invalid Username');
+      //   }
+
+      //   useremail = email;
+
+      // }
+
+      // const { data, error: loginError } = await supabase.auth.signInWithPassword({
+      //   email:useremail,
+      //   password,
+      // });
+
+      let email = identifier;
+
+    // If it doesn't contain @, assume it's a username
+    if (!identifier.includes('@')) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('username', identifier)
+        .single();
+
+      if (error || !data) throw new Error('Username not found.');
+      email = data.email;
+    }
+
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
       if (loginError) throw loginError;
 
@@ -75,10 +121,10 @@ export default function Login() {
             <div className="relative">
               <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
-                type="email"
-                name="email"
-                placeholder="Email address"
-                value={form.email}
+                type="text"
+                name="identifier"
+                placeholder="Email address or Username"
+                value={form.identifier}
                 onChange={handleChange}
                 className="input-field pl-10"
                 disabled={isLoading}

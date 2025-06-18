@@ -3,7 +3,7 @@ backend/.env
 backend/node_modules
 
 # Ignore frontend environment file
-/frontend/src/.env
+/frontend/.env
 frontend/node_modules
 
 # Optionally ignore supabase folder (if not tracking schema/functions/migrations)
