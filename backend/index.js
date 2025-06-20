@@ -11,6 +11,10 @@ app.use(express.json());
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
 
+//eventRequestsRoutes
+const eventRequestRoutes = require('./routes/eventRequestRoutes');
+app.use('/event-requests', eventRequestRoutes);
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

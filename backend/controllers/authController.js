@@ -75,7 +75,12 @@ const login = async (req, res) => {
     password,
   });
 
-  if (error) return res.status(400).json({ error: error.message });
+  if (error){ 
+    return res.status(400).json({ error: error.message });
+  }
+  // else{
+  //   console.log('Access Token:', data.session.access_token);
+  // }
 
   res.status(200).json({ message: 'Login successful', session: data.session, user: data.user });
 };
