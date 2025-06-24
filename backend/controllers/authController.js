@@ -38,26 +38,21 @@ const signup = async (req, res) => {
     return res.status(400).json({ error: 'Username already taken' });
   }
 
-  // Create user
+  // Create user with metadata - trigger will handle profile creation
   const { data: userData, error: signupError } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        username: username,
+        role: 'user'
+      }
+    }
   });
 
   if (signupError) return res.status(400).json({ error: signupError.message });
-
-  const userId = userData.user.id;
-
-  const { error: profileError } = await supabase.from('profiles').insert([
-    {
-      id: userId,
-      first_name: firstName,
-      last_name: lastName,
-      username,
-    },
-  ]);
-
-  if (profileError) return res.status(500).json({ error: profileError.message });
 
   res.status(201).json({ message: 'Signup successful', user: userData.user });
 };

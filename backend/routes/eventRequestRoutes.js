@@ -5,17 +5,20 @@ const{
     createEventRequests,
     getAllEventRequests,
     getEventRequestsById,
+    getMyEventRequests,
     updateEventRequests,
     deleteEventRequests,
 } = require('../controllers/eventRequestController');
 
 const{authMiddleware,adminOnly} = require('../middleware/auth');
 
-router.post('/', authMiddleware,createEventRequests); //anyone
-router.get('/', authMiddleware,adminOnly,getAllEventRequests); //admin
-router.get('/:id', authMiddleware,getEventRequestsById); //anyone
-router.put('/:id', authMiddleware,adminOnly,updateEventRequests); //admin
-router.delete('/:id', authMiddleware,adminOnly,deleteEventRequests); //admin
+router.post('/', authMiddleware, createEventRequests);           // anyone
+router.get('/', authMiddleware, adminOnly, getAllEventRequests); // admin
+router.get('/my-requests', authMiddleware, getMyEventRequests);  // user ← ✅ PUT THIS FIRST
+router.get('/:id', authMiddleware, getEventRequestsById);        // anyone
+router.put('/:id', authMiddleware, updateEventRequests);         // user/admin
+router.delete('/:id', authMiddleware, deleteEventRequests); // admin
+
 
 module.exports = router;
 
