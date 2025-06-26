@@ -66,12 +66,47 @@ const getMyEventRequests = async (req, res) => {
 
 //put event requests by id(updating)
 
+// const updateEventRequests = async (req, res) => {
+//   const { id } = req.params;
+//   const updates = req.body;
+//   const user = req.user;
+
+//   // First, fetch the existing request
+//   const { data: existingRequest, error: fetchError } = await supabase
+//     .from('event_requests')
+//     .select('*')
+//     .eq('id', id)
+//     .single();
+
+//   if (fetchError || !existingRequest) {
+//     return res.status(404).json({ error: 'Request not found' });
+//   }
+
+//   const isAdmin = user.role === 'admin';
+//   const isOwner = existingRequest.requested_by === user.id;
+//   const isPending = existingRequest.status === 'pending';
+
+//   if (!(isAdmin || (isOwner && isPending))) {
+//     return res.status(403).json({ error: 'Forbidden: You cannot update this request' });
+//   }
+
+//   const { error: updateError } = await supabase
+//     .from('event_requests')
+//     .update(updates)
+//     .eq('id', id);
+
+//   if (updateError) {
+//     return res.status(500).json({ error: updateError.message });
+//   }
+
+//   res.json({ message: 'Request updated' });
+// };
 const updateEventRequests = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
   const user = req.user;
 
-  // First, fetch the existing request
+  // Fetch the existing request
   const { data: existingRequest, error: fetchError } = await supabase
     .from('event_requests')
     .select('*')
@@ -86,10 +121,12 @@ const updateEventRequests = async (req, res) => {
   const isOwner = existingRequest.requested_by === user.id;
   const isPending = existingRequest.status === 'pending';
 
+  // Only admin or owner (if still pending) can update
   if (!(isAdmin || (isOwner && isPending))) {
     return res.status(403).json({ error: 'Forbidden: You cannot update this request' });
   }
 
+  // Apply update to event_requests
   const { error: updateError } = await supabase
     .from('event_requests')
     .update(updates)
@@ -99,7 +136,29 @@ const updateEventRequests = async (req, res) => {
     return res.status(500).json({ error: updateError.message });
   }
 
-  res.json({ message: 'Request updated' });
+  // 🟢 If admin approved the request, insert into `events` table
+  if (isAdmin && updates.status === 'approved') {
+    const {club, title, description, location, start_date, end_date } = existingRequest;
+
+    const { error: insertError } = await supabase
+      .from('events')
+      .insert([{
+        club,
+        title,
+        description,
+        location,
+        start_date,
+        end_date,
+        status: 'approved',
+        created_by: existingRequest.requested_by,
+      }]);
+
+    if (insertError) {
+      return res.status(500).json({ error: 'Request updated but event creation failed: ' + insertError.message });
+    }
+  }
+
+  res.json({ message: 'Request updated successfully' });
 };
 
 //deleting event-requests by id

@@ -15,6 +15,11 @@ app.use('/auth', authRoutes);
 const eventRequestRoutes = require('./routes/eventRequestRoutes');
 app.use('/event-requests', eventRequestRoutes);
 
+//eventRoutes
+const eventRoutes= require('./routes/eventRoutes');
+app.use('/event',eventRoutes);
+
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
