@@ -1,30 +1,64 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import Signup from './pages/Signup';
+// import { AnimatePresence } from 'framer-motion'; // For page transitions later
+
+// Core Pages
+import HomePage from './pages/HomePage';
+import EventsPage from './pages/EventsPage';
+import DashboardPage from './pages/DashboardPage';
+import ProfilePage from './pages/ProfilePage';
+import AboutUsPage from './pages/AboutUsPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import VerifyRedirect from './pages/VerifyRedirect';
-// import Dashboard from './pages/Dashboard';
+
+// Admin Pages
+import AdminEventsPage from './pages/admin/AdminEventsPage';
+import AdminEventRequestsPage from './pages/admin/AdminEventRequestsPage';
+
+// Layout and Route Protection
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        {/* Animated background elements */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-          <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
-        </div>
+      {/* <AnimatePresence mode="wait"> */}
+        <Routes>
+          {/* Public routes wrapped in Layout */}
+          <Route path="/" element={<Layout><HomePage /></Layout>} />
+          <Route path="/events" element={<Layout><EventsPage /></Layout>} />
+          <Route path="/about" element={<Layout><AboutUsPage /></Layout>} />
+          <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
+          <Route path="/privacy" element={<Layout><PrivacyPolicyPage /></Layout>} />
 
-        <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/verify" element={<VerifyRedirect />} />
-            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          </Routes>
-        </AnimatePresence>
-      </div>
+          {/* Auth routes - typically without the main Layout, or with a simpler one */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/verify" element={<VerifyRedirect />} />
+
+          {/* Protected Routes (require authentication) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Layout><DashboardPage /></Layout>} />
+            <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
+          </Route>
+
+          {/* Admin Routes (require authentication and 'admin' role) */}
+          <Route element={<AdminRoute />}>
+            <Route path="/admin/events" element={<Layout><AdminEventsPage /></Layout>} />
+            <Route path="/admin/event-requests" element={<Layout><AdminEventRequestsPage /></Layout>} />
+            {/* Note: Admin requests might also be part of the main dashboard for an admin user,
+                so /admin/event-requests might be an alternative or supplementary route.
+                The DashboardPage component will handle showing admin-specific content.
+            */}
+          </Route>
+
+          {/* Catch-all for 404 Not Found page (optional) */}
+          {/* <Route path="*" element={<Layout><NotFoundPage /></Layout>} /> */}
+        </Routes>
+      {/* </AnimatePresence> */}
     </Router>
   );
 }
