@@ -45,6 +45,12 @@ export default function CompleteProfile() {
       return;
     }
 
+     if (!user.email) {
+      setError("Email not available from Google account.");
+      setLoading(false);
+      return;
+    }
+
     const { error: insertError } = await supabase
       .from('profiles')
       .upsert([{ 
