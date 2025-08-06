@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import VerifyRedirect from './pages/VerifyRedirect';
+import CompleteProfile from './pages/completeProfile';
 // import Dashboard from './pages/Dashboard';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/verify" element={<VerifyRedirect />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
             {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           </Routes>
         </AnimatePresence>

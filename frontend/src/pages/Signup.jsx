@@ -5,6 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiLock, FiAlertCircle, FiCheckCircle, FiAtSign } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
+//adding login and signup with google
+import GoogleAuthButton from '../components/GoogleAuthButton.jsx';
+
+
 export default function Signup() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -238,6 +242,7 @@ export default function Signup() {
               </Link>
             </p>
           </div>
+          <GoogleAuthButton />
         </form>
       </motion.div>
     </div>

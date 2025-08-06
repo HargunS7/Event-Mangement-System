@@ -4,6 +4,11 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 
+//adding login and signup with google
+import GoogleAuthButton from '../components/GoogleAuthButton.jsx';
+
+
+
 export default function Login() {
   const navigate = useNavigate();
   // const [form, setForm] = useState({ email: '',username:'', password: '' });
@@ -193,6 +198,7 @@ export default function Login() {
               </Link>
             </p>
           </div>
+          <GoogleAuthButton />
         </form>
       </motion.div>
     </div>
