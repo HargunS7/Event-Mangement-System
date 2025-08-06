@@ -8,3 +8,6 @@ frontend/node_modules
 
 # Optionally ignore supabase folder (if not tracking schema/functions/migrations)
 supabase
+
+#frontend backup by google jules
+frontend-jules-backup.zip

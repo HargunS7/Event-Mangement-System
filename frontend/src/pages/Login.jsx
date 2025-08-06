@@ -198,8 +198,13 @@ export default function Login() {
               </Link>
             </p>
           </div>
-          <GoogleAuthButton />
+          {/* <GoogleAuthButton /> */}
         </form>
+
+        <div className="my-2">
+  <div className="text-center text-sm text-gray-500 mb-2">or</div>
+  <GoogleAuthButton />
+</div>
       </motion.div>
     </div>
   );

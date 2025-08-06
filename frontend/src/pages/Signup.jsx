@@ -134,9 +134,9 @@ export default function Signup() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="text-center mb-8"
         >
-          <h1 className="page-title">Create Account</h1>
-          <p className="text-gray-600">Join us and start managing your events</p>
-        </motion.div>
+  <h1 className="page-title">Create Account</h1>
+  <p className="text-gray-600">Join us and start managing your events</p>
+</motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -242,8 +242,12 @@ export default function Signup() {
               </Link>
             </p>
           </div>
-          <GoogleAuthButton />
+          {/* <GoogleAuthButton /> */}
         </form>
+        <div className="my-2">
+          <div className="text-center text-sm text-gray-500 mb-2">or</div>
+              <GoogleAuthButton />
+          </div>
       </motion.div>
     </div>
   );
