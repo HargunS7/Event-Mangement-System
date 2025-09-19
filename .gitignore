@@ -12,3 +12,6 @@ supabase
 #removing the frontend archive
 #frontend backup by google jules
 frontend-jules-backup.zip
+
+#ignoring the frontend for this website for now 
+CollegeEvents.jsx

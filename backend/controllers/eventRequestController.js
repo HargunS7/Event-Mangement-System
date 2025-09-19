@@ -1,13 +1,15 @@
+const { createClient } = require("@supabase/supabase-js");
 const {supabase} = require('../supabaseClient');
+const jwt = require("jsonwebtoken");
 
 // posting event requests
 
 const createEventRequests = async(req,res)=>{
-    const{club,title,description,location,start_date,end_date} = req.body;
+    const{club_id,title,description,location,start_date,end_date} = req.body;
     const user = req.user; 
 
     const{error} = await supabase.from('event_requests').insert([{
-        club,
+        club_id,
         title,
         description,
         location,
@@ -25,13 +27,109 @@ const createEventRequests = async(req,res)=>{
 };
 
 // get /event-requests/:id
-const getAllEventRequests = async(req,res)=>{
-    const{data,error} = await supabase.from('event_requests').select('*');
-    if(error){
-        return res.status(500).json({error:error.message});
-    }
+
+//----------------------------------------------------------------------------------------
+
+
+// const getAllEventRequests = async(req,res)=>{
+//     const{data,error} = await supabase.from('event_requests').select('*');
+//     if(error){
+//         return res.status(500).json({error:error.message});
+//     }
+//     res.json(data);
+// };
+
+
+//----------------------------------------------------------------------------------------
+
+
+// trying this new code 
+// Ensure you have a Supabase client instance created with your service_role key.
+// This is more secure for backend operations.
+
+// const getAllEventRequests = async (req, res) => {
+//   try {
+//     const token = req.headers.authorization?.replace("Bearer ", "");
+//     if (!token) {
+//       return res.status(401).json({ error: "Missing auth token" });
+//     }
+//     console.log("Decoded user:", jwt.decode(token));
+
+//     // Create Supabase client with the token attached → RLS applies
+//      const supabaseClient = createClient(
+//       process.env.SUPABASE_URL,
+//       process.env.SUPABASE_ANON_KEY,
+//       {
+//         global: {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             apikey: process.env.SUPABASE_ANON_KEY,
+//           },
+//         },
+//         auth: { persistSession: false, detectSessionInUrl: false },
+//       }
+//     );
+
+
+//     const { data: who } = await supabaseClient.rpc('whoami');
+//     console.log('whoami ->', who);
+
+//     // Fetch with RLS enforced
+//     const { data, error } = await supabaseClient
+//       .from("event_requests")
+//       .select("*");
+
+//     if (error) {
+//       console.error("Fetch error:", error);
+//       return res.status(500).json({ error: error.message });
+//     }
+
+//     res.json(data);
+//   } catch (err) {
+//     console.error("Unhandled error:", err);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
+
+//-------------------------------------------------------------------------------
+//this code works ---
+
+const getAllEventRequests = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ error: "Missing auth token" });
+
+    const decoded = jwt.decode(token);
+    console.log("Decoded user:", decoded);
+
+    // Fetch admin's club_id
+    const { data: adminRows, error: adminError } = await supabase
+      .from("admins")
+      .select("club_id")
+      .eq("id", decoded.sub);
+
+    if (adminError) return res.status(500).json({ error: adminError.message });
+    if (!adminRows.length) return res.json([]);
+
+    const clubId = adminRows[0].club_id;
+
+    // Fetch only requests for that club
+    const { data, error } = await supabase
+      .from("event_requests")
+      .select("*")
+      .eq("club_id", clubId);
+
+    if (error) return res.status(500).json({ error: error.message });
+
     res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
+
+//------------------------------------------------------------------------------------------
 
 const getEventRequestsById = async(req,res)=>{
     const{id} = req.params;
@@ -46,23 +144,31 @@ const getEventRequestsById = async(req,res)=>{
     res.json(data);
 };
 
+
+
 // get my event requests
-
 const getMyEventRequests = async (req, res) => {
-  const userId = req.user.id;
+  try {
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ error: "Missing auth token" });
 
-  const { data, error } = await supabase
-    .from('event_requests')
-    .select('*')
-    .eq('requested_by', userId);
+    const supabaseClient = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_ANON_KEY,
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
+    const { data, error } = await supabaseClient
+      .from("event_requests")
+      .select("*");
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  res.json(data);
 };
-
 
 //put event requests by id(updating)
 
@@ -138,12 +244,12 @@ const updateEventRequests = async (req, res) => {
 
   // 🟢 If admin approved the request, insert into `events` table
   if (isAdmin && updates.status === 'approved') {
-    const {club, title, description, location, start_date, end_date } = existingRequest;
+    const {club_id, title, description, location, start_date, end_date } = existingRequest;
 
     const { error: insertError } = await supabase
       .from('events')
       .insert([{
-        club,
+        club_id,
         title,
         description,
         location,

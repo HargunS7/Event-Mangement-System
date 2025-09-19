@@ -3,7 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 // Create two clients - one for auth, one for database operations
 const authClient = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANNON_KEY
+  process.env.SUPABASE_ANON_KEY
 );
 
 const serviceClient = createClient(

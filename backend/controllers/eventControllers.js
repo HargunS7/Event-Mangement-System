@@ -16,11 +16,11 @@ const getApprovedEvents= async(req,res)=>{
 
 // admin can create events
 const createEvent =async(req,res)=>{
-    const{club,title,description,location,start_date,end_date,status} = req.body;
+    const{club_id,title,description,location,start_date,end_date,status} = req.body;
     const user = req.user;
 
     const{error} =await supabase.from('events').insert([{
-        club,
+        club_id,
         title,
         description,
         location,
