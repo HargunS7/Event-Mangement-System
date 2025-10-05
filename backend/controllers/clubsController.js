@@ -18,6 +18,10 @@ async function listClubs(req, res) {
 async function getClub(req, res) {
   const supabase = getSupabaseFromReq(req);
   const clubId = req.params.clubId;
+  const userId =req.user.id;
+
+  const allowed = isAdminOfClub(supabase,userId,clubId);
+  if(!allowed) return res.status(403).json({message:'Forbidden'});
 
   const { data: club, error: e1 } = await supabase
     .from('clubs')
@@ -64,7 +68,7 @@ async function getClubPresident(req, res) {
 
   const { data, error } = await supabase
     .from('club_presidents')
-    .select('id, club_id, assigned_at')
+    .select('id, club_id, assigned_by')
     .eq('club_id', clubId)
     .maybeSingle();
 

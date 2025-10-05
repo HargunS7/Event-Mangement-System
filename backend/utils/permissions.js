@@ -8,7 +8,7 @@ async function isAdminOfClub(supabase,userId,clubId){
     .select('id')
     .eq('id',userId)
     .eq('club_id',clubId)
-    .maybesingle();
+    .maybeSingle();
 
     if(error) throw error;
     return !!data;
@@ -20,7 +20,7 @@ async function isPresidentOfClub(supabase,userId,clubId){
         .select('id')
         .eq('id',userId)
         .eq('club_id',clubId)
-        .maybesingle();
+        .maybeSingle();
 
         if(error) throw error;
         return !!data;
